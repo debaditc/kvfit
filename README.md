@@ -701,7 +701,7 @@ SOFTWARE.
 If you build on `aureon` in your research, please cite:
 
 ```bibtex
-@misc{aureon,
+@misc{kvfit,
   author    = {Debaditya Chakravorty},
   title     = {KvFit},
   year      = {2026},
