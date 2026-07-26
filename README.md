@@ -6,19 +6,19 @@
 
 A tiny, **zero-dependency** planner that tells you whether a language model will fit
 on your GPU **or in your CPU's RAM** — how much memory it needs, how the KV cache grows,
-what it'll cost, and exactly what to change when it doesn't fit.
+what it'll cost, and what to change when it doesn't fit.
 
 [![PyPI](https://img.shields.io/badge/pip%20install-kvfit-534AB7)](https://pypi.org/project/kvfit/)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![Dependencies](https://img.shields.io/badge/runtime%20deps-0-1D9E75)](pyproject.toml)
 
+</div>
+
 ```bash
 pip install kvfit
 kvfit check --model llama-3-8b --gpu a100-40gb --context 8192 --batch 32
 ```
-
-</div>
 
 <div align="center">
   <img src="assets/architecture.svg" alt="kvfit architecture: one command in, a plain-language verdict out" width="760">
@@ -30,15 +30,11 @@ kvfit check --model llama-3-8b --gpu a100-40gb --context 8192 --batch 32
 
 - [The 30-second version](#the-30-second-version)
 - [What is the KV cache?](#what-is-the-kv-cache)
-- [The anatomy of GPU memory](#the-anatomy-of-gpu-memory)
 - [Why it matters (the part that costs money)](#why-it-matters-the-part-that-costs-money)
 - [What kvfit is — and why a package](#what-kvfit-is--and-why-a-package)
-- [How it helps engineers & AI product design](#how-it-helps-engineers--ai-product-design)
 - [Install](#install)
 - [Quickstart](#quickstart)
 - [Example output](#example-output)
-- [Architecture](#architecture)
-- [How a check flows through the code](#how-a-check-flows-through-the-code)
 - [How it works (the math, honestly)](#how-it-works-the-math-honestly)
 - [Supported models & GPUs](#supported-models--gpus)
 - [Honest limitations](#honest-limitations)
@@ -58,33 +54,9 @@ prompt can slow to a crawl or crash outright on a long one.
 Today, most teams find this out *after* they've provisioned the hardware. `kvfit` moves
 that discovery to the start:
 
-```mermaid
-flowchart LR
-    subgraph you["You describe the plan"]
-      M["model<br/>llama-3-8b"]
-      C["context<br/>8,192"]
-      B["batch<br/>32"]
-      H["hardware<br/>A100-40GB"]
-    end
-    K(["kvfit"])
-    subgraph out["You get a verdict"]
-      V["✓ / ✗ fits?"]
-      MEM["memory breakdown"]
-      COST["≈ cost / hr"]
-      FIX["what to change"]
-    end
-    M --> K
-    C --> K
-    B --> K
-    H --> K
-    K --> V
-    K --> MEM
-    K --> COST
-    K --> FIX
-    style K fill:#534ab7,stroke:#3c3489,color:#fff
-    style you fill:#eeedfe,stroke:#534ab7
-    style out fill:#e8f7f1,stroke:#1d9e75
-```
+> **You tell it** which model, how long your conversations get, and how many run at once.
+> **It tells you** whether it fits, how much memory it needs, roughly what it costs, and
+> exactly what to change if it doesn't.
 
 One command. No GPU required to run it. Nothing to rewrite in your stack.
 
@@ -122,56 +94,6 @@ both Keys and Values are stored. Crucially it uses **`kv_heads`**, not attention
 modern models (Llama-3, Mistral, Qwen) use *grouped-query attention* (GQA), which shares
 KV heads to shrink the cache several-fold. Naive calculators miss this; `kvfit` doesn't.
 
-> **GQA vs MHA in one picture** — same model width, wildly different cache. A model with
-> 32 query heads but only 8 KV heads caches **4× less** than full multi-head attention.
-
-```mermaid
-flowchart TB
-    subgraph mha["MHA — 32 KV heads"]
-      direction LR
-      q1["32 query heads"] --- k1["32 KV heads<br/>💾💾💾💾 full cache"]
-    end
-    subgraph gqa["GQA — 8 KV heads (Llama-3)"]
-      direction LR
-      q2["32 query heads"] --- k2["8 KV heads<br/>💾 ¼ the cache"]
-    end
-    mha --> gqa
-    style mha fill:#fdecec,stroke:#d64545
-    style gqa fill:#e8f7f1,stroke:#1d9e75
-```
-
----
-
-## The anatomy of GPU memory
-
-"Will it fit" isn't just about the weights. `kvfit` accounts for **four** things competing
-for the same VRAM, and compares their sum against what the card can *actually* give you
-(total VRAM minus a driver/CUDA reserve, times a usable fraction):
-
-```mermaid
-flowchart TB
-    subgraph card["A100-40GB — what has to fit"]
-      direction TB
-      W["🧠 Weights<br/>num_params × bytes<br/><i>fixed</i>"]
-      KV["📈 KV cache<br/>grows with context × batch<br/><i>the usual culprit</i>"]
-      ACT["⚡ Activations<br/>decode-time buffers<br/><i>small</i>"]
-      OH["🧩 Framework overhead<br/>allocator slack + fragmentation<br/><i>~5%</i>"]
-    end
-    RES["🚫 Reserved: CUDA context + kernels"]
-    USE["✅ Usable VRAM (≈90% of the rest)"]
-    card --> CHECK{"sum ≤ usable?"}
-    RES -.-> CHECK
-    USE -.-> CHECK
-    CHECK -->|yes| FIT["✓ FITS"]
-    CHECK -->|no| NOFIT["✗ over budget → suggestions"]
-    style W fill:#eeedfe,stroke:#534ab7
-    style KV fill:#7f77dd,stroke:#3c3489,color:#fff
-    style ACT fill:#eeedfe,stroke:#534ab7
-    style OH fill:#eeedfe,stroke:#534ab7
-    style FIT fill:#e8f7f1,stroke:#1d9e75
-    style NOFIT fill:#fdecec,stroke:#d64545
-```
-
 ---
 
 ## Why it matters (the part that costs money)
@@ -187,26 +109,6 @@ A worked example for a Llama-3-8B-class model in fp16:
 | KV cache per token | ~128 KiB |
 | 4K context, 1 sequence | ~0.5 GiB |
 | 8K context, batch of 32 | **~32 GiB** — larger than the 16 GiB of weights |
-
-The failure mode without planning looks like this — and `kvfit` short-circuits it:
-
-```mermaid
-flowchart TB
-    G["Guess a GPU"] --> P["Provision it 💳"]
-    P --> D["Deploy"]
-    D --> X{"Long convo<br/>+ real traffic"}
-    X -->|OOM 💥| CRASH["Crash in production"]
-    X -->|survives| SLOW["Over-provisioned,<br/>burning $$$"]
-    CRASH --> BACK["Back to step 1"]
-    SLOW --> BACK
-    BACK -.->|the loop kvfit breaks| G
-
-    K(["kvfit check<br/>(5 seconds, no GPU)"]) --> RIGHT["Right-size once ✓"]
-    style CRASH fill:#fdecec,stroke:#d64545
-    style SLOW fill:#fff4e0,stroke:#d68a00
-    style K fill:#534ab7,stroke:#3c3489,color:#fff
-    style RIGHT fill:#e8f7f1,stroke:#1d9e75
-```
 
 Get this wrong and you crash in production, over-provision expensive GPUs, or burn hours
 guessing. Getting it *right* up front is exactly what `kvfit` is for.
@@ -228,54 +130,6 @@ Why ship it as a package rather than a one-off script:
   fails the build before an over-sized config reaches production.
 - **Plugs into what you already have** — reads Hugging Face `config.json` directly, so it
   works with *your* models, not just a hard-coded list.
-
----
-
-## How it helps engineers & AI product design
-
-`kvfit` turns a fuzzy infra question into a number you can put in a doc, a PR, or a
-pricing model. Different roles get different leverage from the same command:
-
-| Role | The question they ask | What kvfit hands them |
-|---|---|---|
-| **ML / platform engineer** | "Which GPU do we buy/rent for this model?" | Exact memory need + the smallest card that fits, before signing the invoice |
-| **Backend / API engineer** | "What max context and batch can I safely expose?" | Concrete `max_context` and `max_batch` ceilings to enforce in code |
-| **AI product manager** | "Can we promise 32K context on this tier?" | A fit/no-fit answer per hardware tier, with the cost per hour attached |
-| **DevOps / SRE** | "How do we stop an oversized config from shipping?" | A non-zero exit code in CI that blocks the deploy |
-| **Founder / solo dev** | "Will this run on my laptop / one cheap GPU?" | RAM and VRAM checks with quantization what-ifs, on any machine |
-
-The through-line: **capacity decisions move from "find out in production" to "decide in a
-pull request."**
-
-```mermaid
-flowchart LR
-    subgraph before["❌ Before kvfit"]
-      B1["Spin up GPU"] --> B2["Load model"] --> B3["Hit OOM at hour 3"] --> B4["Re-architect under pressure"]
-    end
-    subgraph after["✅ With kvfit"]
-      A1["Describe workload"] --> A2["kvfit check"] --> A3["Pick hardware +<br/>set safe limits"] --> A4["Ship with confidence"]
-    end
-    before -.->|shift left| after
-    style before fill:#fdecec,stroke:#d64545
-    style after fill:#e8f7f1,stroke:#1d9e75
-```
-
-**Where it fits in the product-design loop** — pricing tiers, context limits, and
-hardware budgets all depend on the same memory math, so answer it once and reuse it:
-
-```mermaid
-flowchart TB
-    IDEA["Feature idea:<br/>'long-document chat, 32K context'"] --> Q["kvfit: does it fit our GPUs?"]
-    Q -->|yes, cheaply| TIER["Set the product tier + price"]
-    Q -->|only quantized| TRADE["Decide quality/cost trade-off<br/>(fp8 / int4 sweep)"]
-    Q -->|no| SCOPE["Re-scope: shorter context<br/>or bigger hardware budget"]
-    TIER --> LIMIT["Enforce max_context / max_batch in the API"]
-    TRADE --> LIMIT
-    SCOPE --> LIMIT
-    LIMIT --> CI["Lock it with a CI capacity gate"]
-    style Q fill:#534ab7,stroke:#3c3489,color:#fff
-    style CI fill:#e8f7f1,stroke:#1d9e75
-```
 
 ---
 
@@ -380,17 +234,6 @@ the build fails *before* it ships:
     kvfit check --model ./model/config.json --gpu a100-80gb --context 32768 --batch 16
 ```
 
-```mermaid
-flowchart LR
-    PR["Pull request<br/>bumps model / context"] --> CI["CI runs<br/>kvfit check"]
-    CI --> Q{"fits?"}
-    Q -->|exit 0| MERGE["✅ merge & deploy"]
-    Q -->|exit 1| BLOCK["🛑 build fails<br/>before it ships"]
-    style MERGE fill:#e8f7f1,stroke:#1d9e75
-    style BLOCK fill:#fdecec,stroke:#d64545
-    style CI fill:#eeedfe,stroke:#534ab7
-```
-
 ---
 
 ## Example output
@@ -442,113 +285,6 @@ The same tool checking a **CPU / RAM** target (a 32 GB laptop, quantized int4 we
   max context ~360,038  ·  max batch 44  at these settings
   note: CPU inference is much slower than GPU; this checks whether it fits in RAM, not how fast it runs.
 ```
-
----
-
-## Architecture
-
-`kvfit` is deliberately layered so the math at its core is trivial to read, test, and
-trust. Each module does one thing, and dependencies only ever point downward toward the
-pure formula:
-
-```mermaid
-flowchart TB
-    subgraph interfaces["Interfaces"]
-      CLI["cli.py<br/><i>thin argparse wrapper</i>"]
-      API["__init__.py<br/><i>check() · report_text() · sweep()</i>"]
-    end
-    subgraph resolution["Resolution — what am I checking?"]
-      RES["resolver.py<br/>name / config.json → ModelConfig"]
-      GPUS["gpus.py<br/>name → GPU DeviceSpec"]
-      CPU["cpu.py<br/>RAM / preset / auto → CPU DeviceSpec"]
-    end
-    subgraph core["Core — the pure math"]
-      MODELS["models.py<br/><i>typed dataclasses + dtype table</i>"]
-      MATH["math_engine.py<br/><i>weights · KV · activations · overhead</i>"]
-    end
-    subgraph decide["Decision & presentation"]
-      FIT["fit.py<br/>verdict · max_context · max_batch · suggestions"]
-      SWEEP["sweep.py<br/>KV dtype what-ifs"]
-      COST["cost.py<br/>≈ $/hr, $/mo"]
-      REPORT["report.py<br/>formatted, colored output"]
-    end
-
-    CLI --> API
-    API --> RES & GPUS & CPU
-    API --> FIT & SWEEP & REPORT
-    FIT --> MATH
-    SWEEP --> MATH
-    REPORT --> FIT & SWEEP & COST
-    MATH --> MODELS
-    RES --> MODELS
-    GPUS --> MODELS
-    CPU --> MODELS
-
-    style core fill:#eeedfe,stroke:#534ab7
-    style MATH fill:#7f77dd,stroke:#3c3489,color:#fff
-    style interfaces fill:#e8f7f1,stroke:#1d9e75
-```
-
-**Design principle:** everything below `fit.py` is a *pure function* of a `ModelConfig`
-and a `Workload` — no I/O, no GPU, no network, no global state. That's what makes the
-estimates reproducible and the tests fast.
-
----
-
-## How a check flows through the code
-
-A single `kvfit check` call walks the layers top-to-bottom and comes back with a verdict:
-
-```mermaid
-sequenceDiagram
-    participant U as You
-    participant CLI as cli.py
-    participant R as resolver / gpus / cpu
-    participant M as math_engine.py
-    participant F as fit.py
-    participant P as report.py
-
-    U->>CLI: kvfit check -m llama-3-8b -g a100-40gb -c 8192 -b 32
-    CLI->>R: resolve model + device
-    R-->>CLI: ModelConfig + DeviceSpec
-    CLI->>F: check_fit(model, workload, device)
-    F->>M: estimate_memory(...)
-    M-->>F: weights · KV · activations · overhead
-    F->>F: compare to usable memory
-    F->>F: solve max_context / max_batch
-    F->>F: build suggestions if over budget
-    F-->>CLI: FitResult
-    CLI->>P: render(FitResult)
-    P-->>U: verdict + breakdown + cost + fixes
-```
-
-And the decision logic inside `fit.py` when a workload is over budget — it doesn't just
-say "no," it works out the concrete knobs that make it a "yes":
-
-```mermaid
-flowchart TB
-    START["total memory vs usable"] --> FITQ{"fits?"}
-    FITQ -->|yes| DONE["✓ report headroom<br/>+ max_context / max_batch"]
-    FITQ -->|no| S1{"would int4 KV<br/>get under budget?"}
-    S1 -->|yes| T1["→ quantize KV cache"]
-    S1 -->|no| T1b["→ quantize KV (2–4× smaller)"]
-    T1 --> S2
-    T1b --> S2
-    S2{"a shorter context<br/>that fits?"} -->|yes| T2["→ cap context to max_context"]
-    S2 -->|no| S3
-    T2 --> S3
-    S3{"a smaller batch<br/>that fits?"} -->|yes| T3["→ cap batch to max_batch"]
-    S3 -->|no| S4
-    T3 --> S4
-    S4{"weights dominate<br/>(>60% of usable)?"} -->|yes| T4["→ quantize weights / shard"]
-    S4 -->|no| OUT
-    T4 --> OUT["✗ report over-by + ranked fixes"]
-    style DONE fill:#e8f7f1,stroke:#1d9e75
-    style OUT fill:#fdecec,stroke:#d64545
-    style START fill:#eeedfe,stroke:#534ab7
-```
-
----
 
 ## How it works (the math, honestly)
 
