@@ -1,0 +1,62 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "kvfit"
+version = "0.1.0"
+description = "Will your LLM fit? A tiny, dependency-free KV cache & GPU memory planner."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "kvfit contributors" }]
+keywords = [
+    "llm", "kv-cache", "gpu", "memory", "inference",
+    "vllm", "transformers", "capacity-planning", "quantization",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: System :: Benchmark",
+    "Typing :: Typed",
+]
+# Core has ZERO runtime dependencies. That is a feature.
+dependencies = []
+
+[project.optional-dependencies]
+hub = ["huggingface_hub>=0.20"]
+measure = ["torch>=2.0", "transformers>=4.40"]
+dev = ["pytest>=7", "pytest-cov", "ruff", "mypy", "build"]
+
+[project.scripts]
+kvfit = "kvfit.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/your-org/kvfit"
+Repository = "https://github.com/your-org/kvfit"
+Issues = "https://github.com/your-org/kvfit/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/kvfit"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_unused_ignores = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
