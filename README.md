@@ -668,12 +668,12 @@ thin wrapper. Contributions that add models/GPUs, improve the estimates, or add 
 
 ## 📜 License
 
-MIT. See the license header below.
+MIT © 2026 Debaditya Chakravorty. See the license header below.
 
 ```
 MIT License
 
-Copyright (c) 2026 kvfit contributors
+Copyright (c) 2026 Debaditya Chakravorty
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -698,13 +698,13 @@ SOFTWARE.
 
 ## 🔖 Cite
 
-If you build on `kvfit`, please cite:
+If you build on `aureon` in your research, please cite:
 
 ```bibtex
-@misc{kvfit,
-  title     = {kvfit: Will your LLM fit? A dependency-free KV-cache & GPU/CPU memory planner},
+@misc{aureon,
+  author    = {Debaditya Chakravorty},
+  title     = {KvFit},
   year      = {2026},
   publisher = {GitHub},
-  url       = {https://github.com/your-org/kvfit}
+  url       = {https://github.com/debaditc/kvfit}
 }
-```
