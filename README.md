@@ -1,50 +1,52 @@
-<div align="center">
+<p align="center">
+  <img src="assets/kvfit_logo.png" alt="kvfit — KV-cache & GPU/CPU memory planner" width="420"/>
+</p>
 
-# kvfit
+# ✦ kvfit — Will your LLM fit?
 
-### Will your LLM fit? Find out *before* you spend the money.
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
+[![pip install kvfit](https://img.shields.io/badge/pip%20install-kvfit-534AB7?style=flat-square&logo=pypi&logoColor=white)](https://pypi.org/project/kvfit/)
+[![Runtime deps: 0](https://img.shields.io/badge/runtime%20deps-0-1D9E75?style=flat-square)](pyproject.toml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 
-A tiny, **zero-dependency** planner that tells you whether a language model will fit
-on your GPU **or in your CPU's RAM** — how much memory it needs, how the KV cache grows,
-what it'll cost, and what to change when it doesn't fit.
-
-[![PyPI](https://img.shields.io/badge/pip%20install-kvfit-534AB7)](https://pypi.org/project/kvfit/)
-[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![Dependencies](https://img.shields.io/badge/runtime%20deps-0-1D9E75)](pyproject.toml)
-
-</div>
+> A tiny, **zero-dependency** planner that tells you whether a language model will fit
+> on your GPU **or in your CPU's RAM** — how much memory it needs, how the KV cache
+> grows, what it'll cost, and exactly what to change when it doesn't fit. Drop it into
+> any Python app, notebook, CI pipeline, or serving stack.
 
 ```bash
 pip install kvfit
 kvfit check --model llama-3-8b --gpu a100-40gb --context 8192 --batch 32
 ```
 
-<div align="center">
-  <img src="assets/architecture.svg" alt="kvfit architecture: one command in, a plain-language verdict out" width="760">
-</div>
+---
+
+## 📑 Table of Contents
+
+- [📖 What Is It?](#-what-is-it)
+- [🧠 What is the KV cache?](#-what-is-the-kv-cache)
+- [🧬 The anatomy of GPU memory](#-the-anatomy-of-gpu-memory)
+- [💸 Why it matters (the part that costs money)](#-why-it-matters-the-part-that-costs-money)
+- [🎯 Why a package](#-why-a-package)
+- [👷 How it helps engineers & AI product design](#-how-it-helps-engineers--ai-product-design)
+- [📦 Installation](#-installation)
+- [⚡ Quick Start](#-quick-start)
+- [🖥️ No GPU? Check against your RAM](#️-no-gpu-check-against-your-ram)
+- [🧾 Example output](#-example-output)
+- [🏗️ Architecture](#️-architecture)
+- [🔀 How a check flows through the code](#-how-a-check-flows-through-the-code)
+- [🧮 How it works (the math, honestly)](#-how-it-works-the-math-honestly)
+- [🗂️ Package Structure](#️-package-structure)
+- [🧰 Supported models & GPUs](#-supported-models--gpus)
+- [🚧 Honest limitations](#-honest-limitations)
+- [🛣️ Roadmap](#️-roadmap)
+- [🔧 Development](#-development)
+- [📜 License](#-license)
+- [🔖 Cite](#-cite)
 
 ---
 
-## Table of contents
-
-- [The 30-second version](#the-30-second-version)
-- [What is the KV cache?](#what-is-the-kv-cache)
-- [Why it matters (the part that costs money)](#why-it-matters-the-part-that-costs-money)
-- [What kvfit is — and why a package](#what-kvfit-is--and-why-a-package)
-- [Install](#install)
-- [Quickstart](#quickstart)
-- [Example output](#example-output)
-- [How it works (the math, honestly)](#how-it-works-the-math-honestly)
-- [Supported models & GPUs](#supported-models--gpus)
-- [Honest limitations](#honest-limitations)
-- [Roadmap](#roadmap)
-- [Development](#development)
-- [License](#license)
-
----
-
-## The 30-second version
+## 📖 What Is It?
 
 Running an LLM on your own hardware isn't automatic — the model has to live in the
 memory of a GPU. The catch almost nobody plans for: **the longer the conversation gets,
@@ -54,15 +56,42 @@ prompt can slow to a crawl or crash outright on a long one.
 Today, most teams find this out *after* they've provisioned the hardware. `kvfit` moves
 that discovery to the start:
 
-> **You tell it** which model, how long your conversations get, and how many run at once.
-> **It tells you** whether it fits, how much memory it needs, roughly what it costs, and
-> exactly what to change if it doesn't.
+```mermaid
+flowchart LR
+    subgraph you["You describe the plan"]
+      M["model<br/>llama-3-8b"]
+      C["context<br/>8,192"]
+      B["batch<br/>32"]
+      H["hardware<br/>A100-40GB"]
+    end
+    K(["kvfit"])
+    subgraph out["You get a verdict"]
+      V["✓ / ✗ fits?"]
+      MEM["memory breakdown"]
+      COST["≈ cost / hr"]
+      FIX["what to change"]
+    end
+    M --> K
+    C --> K
+    B --> K
+    H --> K
+    K --> V
+    K --> MEM
+    K --> COST
+    K --> FIX
+    style K fill:#534ab7,stroke:#3c3489,color:#fff
+    style you fill:#eeedfe,stroke:#534ab7
+    style out fill:#e8f7f1,stroke:#1d9e75
+```
 
-One command. No GPU required to run it. Nothing to rewrite in your stack.
+> **The honest thesis.** `kvfit` is a **planning and checking tool**, not a runtime
+> component. It does *not* speed up your model — it tells you what you're dealing with
+> so you make the right call **before** you spend the money. One command, no GPU
+> required to run it, nothing to rewrite in your stack.
 
 ---
 
-## What is the KV cache?
+## 🧠 What is the KV cache?
 
 When a transformer generates text, it produces one token at a time, and each new token
 has to "look back" at every token before it. To avoid recomputing that history on every
@@ -94,9 +123,59 @@ both Keys and Values are stored. Crucially it uses **`kv_heads`**, not attention
 modern models (Llama-3, Mistral, Qwen) use *grouped-query attention* (GQA), which shares
 KV heads to shrink the cache several-fold. Naive calculators miss this; `kvfit` doesn't.
 
+> **GQA vs MHA in one picture** — same model width, wildly different cache. A model with
+> 32 query heads but only 8 KV heads caches **4× less** than full multi-head attention.
+
+```mermaid
+flowchart TB
+    subgraph mha["MHA — 32 KV heads"]
+      direction LR
+      q1["32 query heads"] --- k1["32 KV heads<br/>💾💾💾💾 full cache"]
+    end
+    subgraph gqa["GQA — 8 KV heads (Llama-3)"]
+      direction LR
+      q2["32 query heads"] --- k2["8 KV heads<br/>💾 ¼ the cache"]
+    end
+    mha --> gqa
+    style mha fill:#fdecec,stroke:#d64545
+    style gqa fill:#e8f7f1,stroke:#1d9e75
+```
+
 ---
 
-## Why it matters (the part that costs money)
+## 🧬 The anatomy of GPU memory
+
+"Will it fit" isn't just about the weights. `kvfit` accounts for **four** things competing
+for the same VRAM, and compares their sum against what the card can *actually* give you
+(total VRAM minus a driver/CUDA reserve, times a usable fraction):
+
+```mermaid
+flowchart TB
+    subgraph card["A100-40GB — what has to fit"]
+      direction TB
+      W["🧠 Weights<br/>num_params × bytes<br/><i>fixed</i>"]
+      KV["📈 KV cache<br/>grows with context × batch<br/><i>the usual culprit</i>"]
+      ACT["⚡ Activations<br/>decode-time buffers<br/><i>small</i>"]
+      OH["🧩 Framework overhead<br/>allocator slack + fragmentation<br/><i>~5%</i>"]
+    end
+    RES["🚫 Reserved: CUDA context + kernels"]
+    USE["✅ Usable VRAM (≈90% of the rest)"]
+    card --> CHECK{"sum ≤ usable?"}
+    RES -.-> CHECK
+    USE -.-> CHECK
+    CHECK -->|yes| FIT["✓ FITS"]
+    CHECK -->|no| NOFIT["✗ over budget → suggestions"]
+    style W fill:#eeedfe,stroke:#534ab7
+    style KV fill:#7f77dd,stroke:#3c3489,color:#fff
+    style ACT fill:#eeedfe,stroke:#534ab7
+    style OH fill:#eeedfe,stroke:#534ab7
+    style FIT fill:#e8f7f1,stroke:#1d9e75
+    style NOFIT fill:#fdecec,stroke:#d64545
+```
+
+---
+
+## 💸 Why it matters (the part that costs money)
 
 At production scale, the KV cache is often **bigger than the model weights themselves**,
 and it — not raw compute — is what caps your context length, your batch size, and
@@ -110,18 +189,35 @@ A worked example for a Llama-3-8B-class model in fp16:
 | 4K context, 1 sequence | ~0.5 GiB |
 | 8K context, batch of 32 | **~32 GiB** — larger than the 16 GiB of weights |
 
+The failure mode without planning looks like this — and `kvfit` short-circuits it:
+
+```mermaid
+flowchart TB
+    G["Guess a GPU"] --> P["Provision it 💳"]
+    P --> D["Deploy"]
+    D --> X{"Long convo<br/>+ real traffic"}
+    X -->|OOM 💥| CRASH["Crash in production"]
+    X -->|survives| SLOW["Over-provisioned,<br/>burning $$$"]
+    CRASH --> BACK["Back to step 1"]
+    SLOW --> BACK
+    BACK -.->|the loop kvfit breaks| G
+
+    K(["kvfit check<br/>(5 seconds, no GPU)"]) --> RIGHT["Right-size once ✓"]
+    style CRASH fill:#fdecec,stroke:#d64545
+    style SLOW fill:#fff4e0,stroke:#d68a00
+    style K fill:#534ab7,stroke:#3c3489,color:#fff
+    style RIGHT fill:#e8f7f1,stroke:#1d9e75
+```
+
 Get this wrong and you crash in production, over-provision expensive GPUs, or burn hours
 guessing. Getting it *right* up front is exactly what `kvfit` is for.
 
 ---
 
-## What kvfit is — and why a package
+## 🎯 Why a package
 
-`kvfit` is a **planning and checking tool**, not a runtime component. Its whole value is
-removing the guesswork before you deploy. It does **not** speed up your model — it tells
-you what you're dealing with so you make the right call.
-
-Why ship it as a package rather than a one-off script:
+`kvfit`'s whole value is removing the guesswork before you deploy. Why ship it as a
+package rather than a one-off script:
 
 - **`pip install` and go** — no setup, no config, works offline for popular models.
 - **Zero runtime dependencies** — the core is pure Python math. Nothing to conflict with
@@ -133,10 +229,64 @@ Why ship it as a package rather than a one-off script:
 
 ---
 
-## Install
+## 👷 How it helps engineers & AI product design
+
+`kvfit` turns a fuzzy infra question into a number you can put in a doc, a PR, or a
+pricing model. Different roles get different leverage from the same command:
+
+| Role | The question they ask | What kvfit hands them |
+|---|---|---|
+| **ML / platform engineer** | "Which GPU do we buy/rent for this model?" | Exact memory need + the smallest card that fits, before signing the invoice |
+| **Backend / API engineer** | "What max context and batch can I safely expose?" | Concrete `max_context` and `max_batch` ceilings to enforce in code |
+| **AI product manager** | "Can we promise 32K context on this tier?" | A fit/no-fit answer per hardware tier, with the cost per hour attached |
+| **DevOps / SRE** | "How do we stop an oversized config from shipping?" | A non-zero exit code in CI that blocks the deploy |
+| **Founder / solo dev** | "Will this run on my laptop / one cheap GPU?" | RAM and VRAM checks with quantization what-ifs, on any machine |
+
+The through-line: **capacity decisions move from "find out in production" to "decide in a
+pull request."**
+
+```mermaid
+flowchart LR
+    subgraph before["❌ Before kvfit"]
+      B1["Spin up GPU"] --> B2["Load model"] --> B3["Hit OOM at hour 3"] --> B4["Re-architect under pressure"]
+    end
+    subgraph after["✅ With kvfit"]
+      A1["Describe workload"] --> A2["kvfit check"] --> A3["Pick hardware +<br/>set safe limits"] --> A4["Ship with confidence"]
+    end
+    before -.->|shift left| after
+    style before fill:#fdecec,stroke:#d64545
+    style after fill:#e8f7f1,stroke:#1d9e75
+```
+
+**Where it fits in the product-design loop** — pricing tiers, context limits, and
+hardware budgets all depend on the same memory math, so answer it once and reuse it:
+
+```mermaid
+flowchart TB
+    IDEA["Feature idea:<br/>'long-document chat, 32K context'"] --> Q["kvfit: does it fit our GPUs?"]
+    Q -->|yes, cheaply| TIER["Set the product tier + price"]
+    Q -->|only quantized| TRADE["Decide quality/cost trade-off<br/>(fp8 / int4 sweep)"]
+    Q -->|no| SCOPE["Re-scope: shorter context<br/>or bigger hardware budget"]
+    TIER --> LIMIT["Enforce max_context / max_batch in the API"]
+    TRADE --> LIMIT
+    SCOPE --> LIMIT
+    LIMIT --> CI["Lock it with a CI capacity gate"]
+    style Q fill:#534ab7,stroke:#3c3489,color:#fff
+    style CI fill:#e8f7f1,stroke:#1d9e75
+```
+
+---
+
+## 📦 Installation
 
 ```bash
 pip install kvfit
+```
+
+Verify:
+
+```bash
+python -c "import kvfit; print('✅ ready')"
 ```
 
 Optional extras:
@@ -148,9 +298,9 @@ pip install "kvfit[measure]"  # (roadmap) validate estimates against a real GPU
 
 ---
 
-## Quickstart
+## ⚡ Quick Start
 
-### 1. Command line
+### Command line
 
 ```bash
 # Does Llama-3-8B fit on a 40GB A100 with 8K context and batch 32?
@@ -171,7 +321,57 @@ kvfit gpus
 kvfit cpus
 ```
 
-### No GPU? Check against your RAM instead
+### Python
+
+```python
+import kvfit
+
+fit = kvfit.check("llama-3-8b", gpu="a100-40gb", context=8192, batch=32)
+
+fit.fits              # True / False
+fit.headroom_gib      # spare memory (negative if over budget)
+fit.max_context       # largest context that would fit at this batch
+fit.suggestions       # what to change if it doesn't fit
+
+# Full formatted report as a string
+print(kvfit.report_text("llama-3-8b", gpu="a100-40gb", context=8192, batch=32))
+
+# Just the numbers
+mem = kvfit.estimate_memory(
+    kvfit.resolve_model("llama-3-8b"),
+    kvfit.Workload(context_length=8192, batch_size=32),
+)
+mem.as_gib()          # {'weights': ..., 'kv_cache': ..., 'total': ...}
+```
+
+### CI/CD guard
+
+`kvfit check` exits non-zero when a workload won't fit, so it drops straight into a
+pipeline. If someone bumps the model or raises max context past what your GPUs hold,
+the build fails *before* it ships:
+
+```yaml
+# .github/workflows/capacity.yml
+- name: Verify model fits target GPU
+  run: |
+    pip install kvfit
+    kvfit check --model ./model/config.json --gpu a100-80gb --context 32768 --batch 16
+```
+
+```mermaid
+flowchart LR
+    PR["Pull request<br/>bumps model / context"] --> CI["CI runs<br/>kvfit check"]
+    CI --> Q{"fits?"}
+    Q -->|exit 0| MERGE["✅ merge & deploy"]
+    Q -->|exit 1| BLOCK["🛑 build fails<br/>before it ships"]
+    style MERGE fill:#e8f7f1,stroke:#1d9e75
+    style BLOCK fill:#fdecec,stroke:#d64545
+    style CI fill:#eeedfe,stroke:#534ab7
+```
+
+---
+
+## 🖥️ No GPU? Check against your RAM
 
 `kvfit` runs on any machine — the estimator is pure math, no GPU required. If you plan
 to run a model on **CPU** (llama.cpp, Ollama, GGUF, transformers on CPU), check against
@@ -188,57 +388,23 @@ kvfit check -m phi-3-mini --cpu auto --context 4096 --weight-dtype int4
 kvfit check -m mistral-7b --cpu laptop-16gb --context 8192 --weight-dtype int4
 ```
 
+```python
+# From Python, pass a GiB number, "auto", or a preset
+cpu_fit = kvfit.check("llama-3-8b", cpu=32, context=8192, weight_dtype="int4")
+print(cpu_fit.fits, cpu_fit.gpu.memory_label)   # -> True RAM
+```
+
 On CPU the report speaks in **RAM** rather than VRAM, skips the GPU cost line, and reminds
 you that CPU inference is much slower — the check is about whether it *fits*, not how fast
 it runs. Tip: on CPU people almost always run **quantized** models, so pass
 `--weight-dtype int4` (or `int8`) for a realistic estimate.
 
-### 2. Python
-
-```python
-import kvfit
-
-fit = kvfit.check("llama-3-8b", gpu="a100-40gb", context=8192, batch=32)
-
-print(fit.fits)              # True / False
-print(fit.headroom_gib)      # spare memory (negative if over budget)
-print(fit.max_context)       # largest context that would fit at this batch
-print(fit.suggestions)       # what to change if it doesn't fit
-
-# No GPU? Check against CPU RAM instead (GiB number, "auto", or a preset)
-cpu_fit = kvfit.check("llama-3-8b", cpu=32, context=8192, weight_dtype="int4")
-print(cpu_fit.fits, cpu_fit.gpu.memory_label)   # -> True RAM
-
-# Full formatted report as a string
-print(kvfit.report_text("llama-3-8b", gpu="a100-40gb", context=8192, batch=32))
-
-# Just the numbers
-mem = kvfit.estimate_memory(
-    kvfit.resolve_model("llama-3-8b"),
-    kvfit.Workload(context_length=8192, batch_size=32),
-)
-print(mem.as_gib())          # {'weights': ..., 'kv_cache': ..., 'total': ...}
-```
-
-### 3. CI/CD guard
-
-`kvfit check` exits non-zero when a workload won't fit, so it drops straight into a
-pipeline. If someone bumps the model or raises max context past what your GPUs hold,
-the build fails *before* it ships:
-
-```yaml
-# .github/workflows/capacity.yml
-- name: Verify model fits target GPU
-  run: |
-    pip install kvfit
-    kvfit check --model ./model/config.json --gpu a100-80gb --context 32768 --batch 16
-```
-
 ---
 
-## Example output
+## 🧾 Example output
 
-`kvfit` on a GPU target that's over budget — note the suggestions and the sweep showing that fp8/int4 would fit:
+`kvfit` on a GPU target that's over budget — note the suggestions and the sweep showing
+that fp8/int4 would fit:
 
 ```text
   kvfit  •  Llama-3-8B on a100-40gb
@@ -286,9 +452,116 @@ The same tool checking a **CPU / RAM** target (a 32 GB laptop, quantized int4 we
   note: CPU inference is much slower than GPU; this checks whether it fits in RAM, not how fast it runs.
 ```
 
-## How it works (the math, honestly)
+---
 
-`kvfit` estimates four memory components and compares their sum to your GPU's usable
+## 🏗️ Architecture
+
+`kvfit` is deliberately layered so the math at its core is trivial to read, test, and
+trust. Each module does one thing, and dependencies only ever point downward toward the
+pure formula:
+
+```mermaid
+flowchart TB
+    subgraph interfaces["Interfaces"]
+      CLI["cli.py<br/><i>thin argparse wrapper</i>"]
+      API["__init__.py<br/><i>check() · report_text() · sweep()</i>"]
+    end
+    subgraph resolution["Resolution — what am I checking?"]
+      RES["resolver.py<br/>name / config.json → ModelConfig"]
+      GPUS["gpus.py<br/>name → GPU DeviceSpec"]
+      CPU["cpu.py<br/>RAM / preset / auto → CPU DeviceSpec"]
+    end
+    subgraph core["Core — the pure math"]
+      MODELS["models.py<br/><i>typed dataclasses + dtype table</i>"]
+      MATH["math_engine.py<br/><i>weights · KV · activations · overhead</i>"]
+    end
+    subgraph decide["Decision & presentation"]
+      FIT["fit.py<br/>verdict · max_context · max_batch · suggestions"]
+      SWEEP["sweep.py<br/>KV dtype what-ifs"]
+      COST["cost.py<br/>≈ $/hr, $/mo"]
+      REPORT["report.py<br/>formatted, colored output"]
+    end
+
+    CLI --> API
+    API --> RES & GPUS & CPU
+    API --> FIT & SWEEP & REPORT
+    FIT --> MATH
+    SWEEP --> MATH
+    REPORT --> FIT & SWEEP & COST
+    MATH --> MODELS
+    RES --> MODELS
+    GPUS --> MODELS
+    CPU --> MODELS
+
+    style core fill:#eeedfe,stroke:#534ab7
+    style MATH fill:#7f77dd,stroke:#3c3489,color:#fff
+    style interfaces fill:#e8f7f1,stroke:#1d9e75
+```
+
+**Design principle:** everything below `fit.py` is a *pure function* of a `ModelConfig`
+and a `Workload` — no I/O, no GPU, no network, no global state. That's what makes the
+estimates reproducible and the tests fast.
+
+---
+
+## 🔀 How a check flows through the code
+
+A single `kvfit check` call walks the layers top-to-bottom and comes back with a verdict:
+
+```mermaid
+sequenceDiagram
+    participant U as You
+    participant CLI as cli.py
+    participant R as resolver / gpus / cpu
+    participant M as math_engine.py
+    participant F as fit.py
+    participant P as report.py
+
+    U->>CLI: kvfit check -m llama-3-8b -g a100-40gb -c 8192 -b 32
+    CLI->>R: resolve model + device
+    R-->>CLI: ModelConfig + DeviceSpec
+    CLI->>F: check_fit(model, workload, device)
+    F->>M: estimate_memory(...)
+    M-->>F: weights · KV · activations · overhead
+    F->>F: compare to usable memory
+    F->>F: solve max_context / max_batch
+    F->>F: build suggestions if over budget
+    F-->>CLI: FitResult
+    CLI->>P: render(FitResult)
+    P-->>U: verdict + breakdown + cost + fixes
+```
+
+And the decision logic inside `fit.py` when a workload is over budget — it doesn't just
+say "no," it works out the concrete knobs that make it a "yes":
+
+```mermaid
+flowchart TB
+    START["total memory vs usable"] --> FITQ{"fits?"}
+    FITQ -->|yes| DONE["✓ report headroom<br/>+ max_context / max_batch"]
+    FITQ -->|no| S1{"would int4 KV<br/>get under budget?"}
+    S1 -->|yes| T1["→ quantize KV cache"]
+    S1 -->|no| T1b["→ quantize KV (2–4× smaller)"]
+    T1 --> S2
+    T1b --> S2
+    S2{"a shorter context<br/>that fits?"} -->|yes| T2["→ cap context to max_context"]
+    S2 -->|no| S3
+    T2 --> S3
+    S3{"a smaller batch<br/>that fits?"} -->|yes| T3["→ cap batch to max_batch"]
+    S3 -->|no| S4
+    T3 --> S4
+    S4{"weights dominate<br/>(>60% of usable)?"} -->|yes| T4["→ quantize weights / shard"]
+    S4 -->|no| OUT
+    T4 --> OUT["✗ report over-by + ranked fixes"]
+    style DONE fill:#e8f7f1,stroke:#1d9e75
+    style OUT fill:#fdecec,stroke:#d64545
+    style START fill:#eeedfe,stroke:#534ab7
+```
+
+---
+
+## 🧮 How it works (the math, honestly)
+
+`kvfit` estimates four memory components and compares their sum to your device's usable
 memory:
 
 1. **Weights** — `num_params × bytes_per_element`.
@@ -298,17 +571,36 @@ memory:
 4. **Framework overhead** — allocator slack and fragmentation, modeled as a small
    percentage.
 
-Usable GPU memory is the card's VRAM minus a CUDA-context reserve, times a usable
+Usable memory is the card's VRAM (or system RAM) minus a reserve, times a usable
 fraction (defaults mirror how vLLM reserves memory in practice).
 
-These are **estimates, not a profiler**. They're deliberately a little conservative and
-are meant for capacity planning — expect them to be close, not exact. For ground truth
-on specific hardware, an optional `measure` mode (on the roadmap) will validate estimates
-against a real `model.generate()` run.
+> These are **estimates, not a profiler**. They're deliberately a little conservative and
+> are meant for capacity planning — expect them to be close, not exact. For ground truth
+> on specific hardware, an optional `measure` mode (on the roadmap) will validate
+> estimates against a real `model.generate()` run.
 
 ---
 
-## Supported models & GPUs
+## 🗂️ Package Structure
+
+```
+kvfit/
+├── __init__.py        # public API — check() · report_text() · sweep() + re-exports
+├── models.py          # typed dataclasses (ModelConfig, Workload, DeviceSpec, ...) + dtype table
+├── math_engine.py     # the pure formula — weights · KV cache · activations · overhead
+├── fit.py             # verdict, max_context / max_batch, ranked suggestions
+├── sweep.py           # KV-dtype what-if sweep (fp16 · fp8 · int4)
+├── cost.py            # rough $/hr and $/mo estimates
+├── report.py          # formatted, colored terminal output
+├── resolver.py        # model name / config.json / HF repo → ModelConfig
+├── gpus.py            # built-in GPU catalog → DeviceSpec
+├── cpu.py             # CPU RAM presets / auto-detect → DeviceSpec
+└── cli.py             # thin argparse wrapper (kvfit check / sweep / models / gpus / cpus)
+```
+
+---
+
+## 🧰 Supported models & GPUs
 
 Built-in models resolve instantly with no network:
 
@@ -328,7 +620,7 @@ Built-in GPUs include `H200`, `H100`, `A100-40/80GB`, `L40S`, `L4`, `A10G`, `V10
 
 ---
 
-## Honest limitations
+## 🚧 Honest limitations
 
 - It's an **estimator**, not a benchmark. Real memory depends on the serving engine,
   attention kernel, and allocator behavior.
@@ -343,7 +635,7 @@ borderline cases on real hardware.
 
 ---
 
-## Roadmap
+## 🛣️ Roadmap
 
 - [ ] `measure` mode: validate estimates against a real GPU via `transformers`.
 - [ ] Prefill vs. decode memory-over-time curve.
@@ -355,7 +647,7 @@ Contributions welcome — see below.
 
 ---
 
-## Development
+## 🔧 Development
 
 ```bash
 git clone https://github.com/your-org/kvfit
@@ -374,6 +666,45 @@ thin wrapper. Contributions that add models/GPUs, improve the estimates, or add 
 
 ---
 
-## License
+## 📜 License
 
-MIT — see [LICENSE](LICENSE).
+MIT. See the license header below.
+
+```
+MIT License
+
+Copyright (c) 2026 kvfit contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+---
+
+## 🔖 Cite
+
+If you build on `kvfit`, please cite:
+
+```bibtex
+@misc{kvfit,
+  title     = {kvfit: Will your LLM fit? A dependency-free KV-cache & GPU/CPU memory planner},
+  year      = {2026},
+  publisher = {GitHub},
+  url       = {https://github.com/your-org/kvfit}
+}
+```
