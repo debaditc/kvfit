@@ -1,0 +1,1253 @@
+{
+ "models": [
+  {
+   "name": "Llama-2-7B",
+   "aliases": [
+    "llama2-7b"
+   ],
+   "num_params": 6738417664,
+   "repo": "meta-llama/Llama-2-7b-hf",
+   "config": {
+    "hidden_size": 4096,
+    "intermediate_size": 11008,
+    "max_position_embeddings": 4096,
+    "model_type": "llama",
+    "num_attention_heads": 32,
+    "num_hidden_layers": 32,
+    "num_key_value_heads": 32,
+    "tie_word_embeddings": false,
+    "vocab_size": 32000
+   }
+  },
+  {
+   "name": "Llama-2-13B",
+   "aliases": [
+    "llama2-13b"
+   ],
+   "num_params": 13015866880,
+   "repo": "meta-llama/Llama-2-13b-hf",
+   "config": {
+    "hidden_size": 5120,
+    "intermediate_size": 13824,
+    "max_position_embeddings": 4096,
+    "model_type": "llama",
+    "num_attention_heads": 40,
+    "num_hidden_layers": 40,
+    "num_key_value_heads": 40,
+    "tie_word_embeddings": false,
+    "vocab_size": 32000
+   }
+  },
+  {
+   "name": "Llama-3-8B",
+   "aliases": [
+    "llama3-8b",
+    "meta-llama/llama-3-8b"
+   ],
+   "num_params": 8030261248,
+   "repo": "meta-llama/Meta-Llama-3-8B-Instruct",
+   "config": {
+    "hidden_size": 4096,
+    "intermediate_size": 14336,
+    "max_position_embeddings": 8192,
+    "model_type": "llama",
+    "num_attention_heads": 32,
+    "num_hidden_layers": 32,
+    "num_key_value_heads": 8,
+    "tie_word_embeddings": false,
+    "vocab_size": 128256
+   }
+  },
+  {
+   "name": "Llama-3-70B",
+   "aliases": [
+    "llama3-70b"
+   ],
+   "num_params": 70553706496,
+   "repo": "meta-llama/Meta-Llama-3-70B-Instruct",
+   "config": {
+    "hidden_size": 8192,
+    "intermediate_size": 28672,
+    "max_position_embeddings": 8192,
+    "model_type": "llama",
+    "num_attention_heads": 64,
+    "num_hidden_layers": 80,
+    "num_key_value_heads": 8,
+    "tie_word_embeddings": false,
+    "vocab_size": 128256
+   }
+  },
+  {
+   "name": "Llama-3.1-8B",
+   "aliases": [
+    "llama3.1-8b",
+    "meta-llama/llama-3.1-8b-instruct"
+   ],
+   "num_params": 8030261248,
+   "repo": "meta-llama/Llama-3.1-8B-Instruct",
+   "config": {
+    "head_dim": 128,
+    "hidden_size": 4096,
+    "intermediate_size": 14336,
+    "max_position_embeddings": 131072,
+    "model_type": "llama",
+    "num_attention_heads": 32,
+    "num_hidden_layers": 32,
+    "num_key_value_heads": 8,
+    "tie_word_embeddings": false,
+    "vocab_size": 128256
+   }
+  },
+  {
+   "name": "Llama-3.2-3B",
+   "aliases": [
+    "llama3.2-3b"
+   ],
+   "num_params": 3212749824,
+   "repo": "meta-llama/Llama-3.2-3B-Instruct",
+   "config": {
+    "head_dim": 128,
+    "hidden_size": 3072,
+    "intermediate_size": 8192,
+    "max_position_embeddings": 131072,
+    "model_type": "llama",
+    "num_attention_heads": 24,
+    "num_hidden_layers": 28,
+    "num_key_value_heads": 8,
+    "tie_word_embeddings": true,
+    "vocab_size": 128256
+   }
+  },
+  {
+   "name": "Llama-3.3-70B",
+   "aliases": [
+    "llama-3.1-70b",
+    "llama3.3-70b",
+    "meta-llama/llama-3.3-70b-instruct"
+   ],
+   "num_params": 70553706496,
+   "repo": "meta-llama/Llama-3.3-70B-Instruct",
+   "config": {
+    "head_dim": 128,
+    "hidden_size": 8192,
+    "intermediate_size": 28672,
+    "max_position_embeddings": 131072,
+    "model_type": "llama",
+    "num_attention_heads": 64,
+    "num_hidden_layers": 80,
+    "num_key_value_heads": 8,
+    "tie_word_embeddings": false,
+    "vocab_size": 128256
+   }
+  },
+  {
+   "name": "Llama-4-Scout",
+   "aliases": [
+    "llama-4-scout-17b-16e",
+    "llama4-scout"
+   ],
+   "num_params": 108641793536,
+   "repo": "meta-llama/Llama-4-Scout-17B-16E-Instruct",
+   "config": {
+    "model_type": "llama4_text",
+    "tie_word_embeddings": false,
+    "attention_chunk_size": 8192,
+    "head_dim": 128,
+    "hidden_size": 5120,
+    "intermediate_size": 8192,
+    "intermediate_size_mlp": 16384,
+    "max_position_embeddings": 10485760,
+    "no_rope_layers": [
+     1,
+     1,
+     1,
+     0,
+     1,
+     1,
+     1,
+     0,
+     1,
+     1,
+     1,
+     0,
+     1,
+     1,
+     1,
+     0,
+     1,
+     1,
+     1,
+     0,
+     1,
+     1,
+     1,
+     0,
+     1,
+     1,
+     1,
+     0,
+     1,
+     1,
+     1,
+     0,
+     1,
+     1,
+     1,
+     0,
+     1,
+     1,
+     1,
+     0,
+     1,
+     1,
+     1,
+     0,
+     1,
+     1,
+     1,
+     0
+    ],
+    "num_attention_heads": 40,
+    "num_experts_per_tok": 1,
+    "num_hidden_layers": 48,
+    "num_key_value_heads": 8,
+    "num_local_experts": 16,
+    "vocab_size": 202048
+   }
+  },
+  {
+   "name": "Mistral-7B-v0.1",
+   "aliases": [
+    "mistralai/mistral-7b-v0.1"
+   ],
+   "num_params": 7241732096,
+   "repo": "mistralai/Mistral-7B-v0.1",
+   "config": {
+    "hidden_size": 4096,
+    "intermediate_size": 14336,
+    "max_position_embeddings": 32768,
+    "model_type": "mistral",
+    "num_attention_heads": 32,
+    "num_hidden_layers": 32,
+    "num_key_value_heads": 8,
+    "sliding_window": 4096,
+    "tie_word_embeddings": false,
+    "vocab_size": 32000
+   }
+  },
+  {
+   "name": "Mistral-7B-v0.3",
+   "aliases": [
+    "mistral-7b",
+    "mistralai/mistral-7b"
+   ],
+   "num_params": 7248023552,
+   "repo": "mistralai/Mistral-7B-Instruct-v0.3",
+   "config": {
+    "hidden_size": 4096,
+    "intermediate_size": 14336,
+    "max_position_embeddings": 32768,
+    "model_type": "mistral",
+    "num_attention_heads": 32,
+    "num_hidden_layers": 32,
+    "num_key_value_heads": 8,
+    "tie_word_embeddings": false,
+    "vocab_size": 32768
+   }
+  },
+  {
+   "name": "Mistral-Nemo-12B",
+   "aliases": [
+    "mistral-nemo"
+   ],
+   "num_params": 12247782400,
+   "repo": "mistralai/Mistral-Nemo-Instruct-2407",
+   "config": {
+    "head_dim": 128,
+    "hidden_size": 5120,
+    "intermediate_size": 14336,
+    "max_position_embeddings": 131072,
+    "model_type": "mistral",
+    "num_attention_heads": 32,
+    "num_hidden_layers": 40,
+    "num_key_value_heads": 8,
+    "tie_word_embeddings": false,
+    "vocab_size": 131072
+   }
+  },
+  {
+   "name": "Mistral-Small-3.2-24B",
+   "aliases": [
+    "mistral-small-3.2",
+    "mistral-small-24b"
+   ],
+   "num_params": 24011361280,
+   "repo": "mistralai/Mistral-Small-3.2-24B-Instruct-2506",
+   "config": {
+    "model_type": "mistral",
+    "head_dim": 128,
+    "hidden_size": 5120,
+    "intermediate_size": 32768,
+    "max_position_embeddings": 131072,
+    "num_attention_heads": 32,
+    "num_hidden_layers": 40,
+    "num_key_value_heads": 8,
+    "vocab_size": 131072
+   }
+  },
+  {
+   "name": "Qwen2.5-7B",
+   "aliases": [
+    "qwen2-7b",
+    "qwen-7b"
+   ],
+   "num_params": 7615616512,
+   "repo": "Qwen/Qwen2.5-7B-Instruct",
+   "config": {
+    "hidden_size": 3584,
+    "intermediate_size": 18944,
+    "max_position_embeddings": 32768,
+    "model_type": "qwen2",
+    "num_attention_heads": 28,
+    "num_hidden_layers": 28,
+    "num_key_value_heads": 4,
+    "sliding_window": 131072,
+    "tie_word_embeddings": false,
+    "use_sliding_window": false,
+    "vocab_size": 152064
+   }
+  },
+  {
+   "name": "Qwen2.5-72B",
+   "aliases": [
+    "qwen2-72b"
+   ],
+   "num_params": 72706203648,
+   "repo": "Qwen/Qwen2.5-72B-Instruct",
+   "config": {
+    "hidden_size": 8192,
+    "intermediate_size": 29568,
+    "max_position_embeddings": 32768,
+    "model_type": "qwen2",
+    "num_attention_heads": 64,
+    "num_hidden_layers": 80,
+    "num_key_value_heads": 8,
+    "sliding_window": 131072,
+    "tie_word_embeddings": false,
+    "use_sliding_window": false,
+    "vocab_size": 152064
+   }
+  },
+  {
+   "name": "Qwen3-8B",
+   "aliases": [
+    "qwen/qwen3-8b"
+   ],
+   "num_params": 8190735360,
+   "repo": "Qwen/Qwen3-8B",
+   "config": {
+    "head_dim": 128,
+    "hidden_size": 4096,
+    "intermediate_size": 12288,
+    "max_position_embeddings": 40960,
+    "model_type": "qwen3",
+    "num_attention_heads": 32,
+    "num_hidden_layers": 36,
+    "num_key_value_heads": 8,
+    "tie_word_embeddings": false,
+    "use_sliding_window": false,
+    "vocab_size": 151936
+   }
+  },
+  {
+   "name": "Qwen3-32B",
+   "aliases": [
+    "qwen/qwen3-32b"
+   ],
+   "num_params": 32762123264,
+   "repo": "Qwen/Qwen3-32B",
+   "config": {
+    "head_dim": 128,
+    "hidden_size": 5120,
+    "intermediate_size": 25600,
+    "max_position_embeddings": 40960,
+    "model_type": "qwen3",
+    "num_attention_heads": 64,
+    "num_hidden_layers": 64,
+    "num_key_value_heads": 8,
+    "tie_word_embeddings": false,
+    "use_sliding_window": false,
+    "vocab_size": 151936
+   }
+  },
+  {
+   "name": "Qwen3-30B-A3B",
+   "aliases": [
+    "qwen/qwen3-30b-a3b"
+   ],
+   "num_params": 30532122624,
+   "repo": "Qwen/Qwen3-30B-A3B",
+   "config": {
+    "head_dim": 128,
+    "hidden_size": 2048,
+    "intermediate_size": 6144,
+    "max_position_embeddings": 40960,
+    "mlp_only_layers": [],
+    "model_type": "qwen3_moe",
+    "moe_intermediate_size": 768,
+    "num_attention_heads": 32,
+    "num_experts": 128,
+    "num_experts_per_tok": 8,
+    "num_hidden_layers": 48,
+    "num_key_value_heads": 4,
+    "tie_word_embeddings": false,
+    "use_sliding_window": false,
+    "vocab_size": 151936
+   }
+  },
+  {
+   "name": "Qwen3-235B-A22B",
+   "aliases": [
+    "qwen/qwen3-235b-a22b"
+   ],
+   "num_params": 235093634560,
+   "repo": "Qwen/Qwen3-235B-A22B",
+   "config": {
+    "head_dim": 128,
+    "hidden_size": 4096,
+    "intermediate_size": 12288,
+    "max_position_embeddings": 40960,
+    "mlp_only_layers": [],
+    "model_type": "qwen3_moe",
+    "moe_intermediate_size": 1536,
+    "num_attention_heads": 64,
+    "num_experts": 128,
+    "num_experts_per_tok": 8,
+    "num_hidden_layers": 94,
+    "num_key_value_heads": 4,
+    "tie_word_embeddings": false,
+    "use_sliding_window": false,
+    "vocab_size": 151936
+   }
+  },
+  {
+   "name": "Qwen3-Next-80B-A3B",
+   "aliases": [
+    "qwen3-next"
+   ],
+   "num_params": 81324862720,
+   "repo": "Qwen/Qwen3-Next-80B-A3B-Instruct",
+   "config": {
+    "full_attention_interval": 4,
+    "head_dim": 256,
+    "hidden_size": 2048,
+    "intermediate_size": 5120,
+    "linear_conv_kernel_dim": 4,
+    "linear_key_head_dim": 128,
+    "linear_num_key_heads": 16,
+    "linear_num_value_heads": 32,
+    "linear_value_head_dim": 128,
+    "max_position_embeddings": 262144,
+    "mlp_only_layers": [],
+    "model_type": "qwen3_next",
+    "moe_intermediate_size": 512,
+    "num_attention_heads": 16,
+    "num_experts": 512,
+    "num_experts_per_tok": 10,
+    "num_hidden_layers": 48,
+    "num_key_value_heads": 2,
+    "shared_expert_intermediate_size": 512,
+    "tie_word_embeddings": false,
+    "use_sliding_window": false,
+    "vocab_size": 151936
+   }
+  },
+  {
+   "name": "Qwen3.8-27B",
+   "aliases": [
+    "qwen/qwen3.8-27b"
+   ],
+   "num_params": 27781427952,
+   "repo": "Qwen/Qwen3.8-27B",
+   "config": {
+    "model_type": "qwen3_5_text",
+    "tie_word_embeddings": false,
+    "full_attention_interval": 4,
+    "head_dim": 256,
+    "hidden_size": 5120,
+    "intermediate_size": 17408,
+    "layer_types": [
+     "linear_attention",
+     "linear_attention",
+     "linear_attention",
+     "full_attention",
+     "linear_attention",
+     "linear_attention",
+     "linear_attention",
+     "full_attention",
+     "linear_attention",
+     "linear_attention",
+     "linear_attention",
+     "full_attention",
+     "linear_attention",
+     "linear_attention",
+     "linear_attention",
+     "full_attention",
+     "linear_attention",
+     "linear_attention",
+     "linear_attention",
+     "full_attention",
+     "linear_attention",
+     "linear_attention",
+     "linear_attention",
+     "full_attention",
+     "linear_attention",
+     "linear_attention",
+     "linear_attention",
+     "full_attention",
+     "linear_attention",
+     "linear_attention",
+     "linear_attention",
+     "full_attention",
+     "linear_attention",
+     "linear_attention",
+     "linear_attention",
+     "full_attention",
+     "linear_attention",
+     "linear_attention",
+     "linear_attention",
+     "full_attention",
+     "linear_attention",
+     "linear_attention",
+     "linear_attention",
+     "full_attention",
+     "linear_attention",
+     "linear_attention",
+     "linear_attention",
+     "full_attention",
+     "linear_attention",
+     "linear_attention",
+     "linear_attention",
+     "full_attention",
+     "linear_attention",
+     "linear_attention",
+     "linear_attention",
+     "full_attention",
+     "linear_attention",
+     "linear_attention",
+     "linear_attention",
+     "full_attention",
+     "linear_attention",
+     "linear_attention",
+     "linear_attention",
+     "full_attention"
+    ],
+    "linear_conv_kernel_dim": 4,
+    "linear_key_head_dim": 128,
+    "linear_num_key_heads": 16,
+    "linear_num_value_heads": 48,
+    "linear_value_head_dim": 128,
+    "mamba_ssm_dtype": "float32",
+    "max_position_embeddings": 262144,
+    "num_attention_heads": 24,
+    "num_hidden_layers": 64,
+    "num_key_value_heads": 4,
+    "vocab_size": 248320
+   }
+  },
+  {
+   "name": "Gemma-2-9B",
+   "aliases": [
+    "gemma2-9b"
+   ],
+   "num_params": 9241705984,
+   "repo": "google/gemma-2-9b-it",
+   "config": {
+    "head_dim": 256,
+    "hidden_size": 3584,
+    "intermediate_size": 14336,
+    "max_position_embeddings": 8192,
+    "model_type": "gemma2",
+    "num_attention_heads": 16,
+    "num_hidden_layers": 42,
+    "num_key_value_heads": 8,
+    "sliding_window": 4096,
+    "sliding_window_size": 4096,
+    "vocab_size": 256000
+   }
+  },
+  {
+   "name": "Gemma-2-27B",
+   "aliases": [
+    "gemma2-27b"
+   ],
+   "num_params": 27227128320,
+   "repo": "google/gemma-2-27b-it",
+   "config": {
+    "head_dim": 128,
+    "hidden_size": 4608,
+    "intermediate_size": 36864,
+    "max_position_embeddings": 8192,
+    "model_type": "gemma2",
+    "num_attention_heads": 32,
+    "num_hidden_layers": 46,
+    "num_key_value_heads": 16,
+    "sliding_window": 4096,
+    "sliding_window_size": 4096,
+    "vocab_size": 256000
+   }
+  },
+  {
+   "name": "Gemma-3-4B",
+   "aliases": [
+    "gemma3-4b"
+   ],
+   "num_params": 4300079472,
+   "repo": "google/gemma-3-4b-it",
+   "config": {
+    "model_type": "gemma3_text",
+    "head_dim": 256,
+    "hidden_size": 2560,
+    "intermediate_size": 10240,
+    "max_position_embeddings": 131072,
+    "num_attention_heads": 8,
+    "num_hidden_layers": 34,
+    "num_key_value_heads": 4,
+    "sliding_window": 1024,
+    "sliding_window_pattern": 6,
+    "vocab_size": 262208
+   }
+  },
+  {
+   "name": "Gemma-3-12B",
+   "aliases": [
+    "gemma3-12b"
+   ],
+   "num_params": 12187325040,
+   "repo": "google/gemma-3-12b-it",
+   "config": {
+    "model_type": "gemma3_text",
+    "head_dim": 256,
+    "hidden_size": 3840,
+    "intermediate_size": 15360,
+    "max_position_embeddings": 131072,
+    "num_attention_heads": 16,
+    "num_hidden_layers": 48,
+    "num_key_value_heads": 8,
+    "sliding_window": 1024,
+    "sliding_window_pattern": 6,
+    "vocab_size": 262208
+   }
+  },
+  {
+   "name": "Gemma-3-27B",
+   "aliases": [
+    "gemma3-27b"
+   ],
+   "num_params": 27432406640,
+   "repo": "google/gemma-3-27b-it",
+   "config": {
+    "model_type": "gemma3_text",
+    "head_dim": 128,
+    "hidden_size": 5376,
+    "intermediate_size": 21504,
+    "max_position_embeddings": 131072,
+    "num_attention_heads": 32,
+    "num_hidden_layers": 62,
+    "num_key_value_heads": 16,
+    "sliding_window": 1024,
+    "sliding_window_pattern": 6,
+    "vocab_size": 262208
+   }
+  },
+  {
+   "name": "Phi-3-mini",
+   "aliases": [
+    "phi-3-mini-4k",
+    "phi3-mini"
+   ],
+   "num_params": 3821079552,
+   "repo": "microsoft/Phi-3-mini-4k-instruct",
+   "config": {
+    "hidden_size": 3072,
+    "intermediate_size": 8192,
+    "max_position_embeddings": 4096,
+    "model_type": "phi3",
+    "num_attention_heads": 32,
+    "num_hidden_layers": 32,
+    "num_key_value_heads": 32,
+    "sliding_window": 2047,
+    "tie_word_embeddings": false,
+    "vocab_size": 32064
+   }
+  },
+  {
+   "name": "Phi-4",
+   "aliases": [
+    "phi4"
+   ],
+   "num_params": 14659507200,
+   "repo": "microsoft/phi-4",
+   "config": {
+    "hidden_size": 5120,
+    "intermediate_size": 17920,
+    "max_position_embeddings": 16384,
+    "model_type": "phi3",
+    "num_attention_heads": 40,
+    "num_hidden_layers": 40,
+    "num_key_value_heads": 10,
+    "tie_word_embeddings": false,
+    "vocab_size": 100352
+   }
+  },
+  {
+   "name": "Phi-4-mini",
+   "aliases": [
+    "phi4-mini"
+   ],
+   "num_params": 3836021760,
+   "repo": "microsoft/Phi-4-mini-instruct",
+   "config": {
+    "hidden_size": 3072,
+    "intermediate_size": 8192,
+    "max_position_embeddings": 131072,
+    "model_type": "phi3",
+    "num_attention_heads": 24,
+    "num_hidden_layers": 32,
+    "num_key_value_heads": 8,
+    "sliding_window": 262144,
+    "tie_word_embeddings": true,
+    "vocab_size": 200064
+   }
+  },
+  {
+   "name": "DeepSeek-V3",
+   "aliases": [
+    "deepseek-r1",
+    "deepseek-v3-0324",
+    "deepseek-ai/deepseek-v3"
+   ],
+   "num_params": 684531386000,
+   "repo": "deepseek-ai/DeepSeek-V3",
+   "config": {
+    "first_k_dense_replace": 3,
+    "hidden_size": 7168,
+    "intermediate_size": 18432,
+    "kv_lora_rank": 512,
+    "max_position_embeddings": 163840,
+    "model_type": "deepseek_v3",
+    "moe_intermediate_size": 2048,
+    "moe_layer_freq": 1,
+    "n_routed_experts": 256,
+    "n_shared_experts": 1,
+    "num_attention_heads": 128,
+    "num_experts_per_tok": 8,
+    "num_hidden_layers": 61,
+    "num_key_value_heads": 128,
+    "q_lora_rank": 1536,
+    "qk_nope_head_dim": 128,
+    "qk_rope_head_dim": 64,
+    "tie_word_embeddings": false,
+    "v_head_dim": 128,
+    "vocab_size": 129280,
+    "quantization_config": {
+     "quant_method": "fp8"
+    }
+   }
+  },
+  {
+   "name": "Kimi-K2",
+   "aliases": [
+    "kimi-k2-instruct"
+   ],
+   "num_params": 1026408235864,
+   "repo": "moonshotai/Kimi-K2-Instruct",
+   "config": {
+    "first_k_dense_replace": 1,
+    "hidden_size": 7168,
+    "intermediate_size": 18432,
+    "kv_lora_rank": 512,
+    "max_position_embeddings": 131072,
+    "model_type": "kimi_k2",
+    "moe_intermediate_size": 2048,
+    "moe_layer_freq": 1,
+    "n_routed_experts": 384,
+    "n_shared_experts": 1,
+    "num_attention_heads": 64,
+    "num_experts_per_tok": 8,
+    "num_hidden_layers": 61,
+    "num_key_value_heads": 64,
+    "q_lora_rank": 1536,
+    "qk_nope_head_dim": 128,
+    "qk_rope_head_dim": 64,
+    "tie_word_embeddings": false,
+    "v_head_dim": 128,
+    "vocab_size": 163840,
+    "quantization_config": {
+     "quant_method": "fp8"
+    }
+   }
+  },
+  {
+   "name": "gpt-oss-20b",
+   "aliases": [
+    "openai/gpt-oss-20b"
+   ],
+   "num_params": 20914757184,
+   "repo": "openai/gpt-oss-20b",
+   "config": {
+    "experts_per_token": 4,
+    "head_dim": 64,
+    "hidden_size": 2880,
+    "intermediate_size": 2880,
+    "layer_types": [
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention"
+    ],
+    "max_position_embeddings": 131072,
+    "model_type": "gpt_oss",
+    "num_attention_heads": 64,
+    "num_experts_per_tok": 4,
+    "num_hidden_layers": 24,
+    "num_key_value_heads": 8,
+    "num_local_experts": 32,
+    "sliding_window": 128,
+    "tie_word_embeddings": false,
+    "vocab_size": 201088,
+    "quantization_config": {
+     "quant_method": "mxfp4"
+    }
+   }
+  },
+  {
+   "name": "gpt-oss-120b",
+   "aliases": [
+    "openai/gpt-oss-120b"
+   ],
+   "num_params": 116829156672,
+   "repo": "openai/gpt-oss-120b",
+   "config": {
+    "experts_per_token": 4,
+    "head_dim": 64,
+    "hidden_size": 2880,
+    "intermediate_size": 2880,
+    "layer_types": [
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention",
+     "sliding_attention",
+     "full_attention"
+    ],
+    "max_position_embeddings": 131072,
+    "model_type": "gpt_oss",
+    "num_attention_heads": 64,
+    "num_experts_per_tok": 4,
+    "num_hidden_layers": 36,
+    "num_key_value_heads": 8,
+    "num_local_experts": 128,
+    "sliding_window": 128,
+    "tie_word_embeddings": false,
+    "vocab_size": 201088,
+    "quantization_config": {
+     "quant_method": "mxfp4"
+    }
+   }
+  },
+  {
+   "name": "GLM-4.5",
+   "aliases": [
+    "zai-org/glm-4.5"
+   ],
+   "num_params": 358337791296,
+   "repo": "zai-org/GLM-4.5",
+   "config": {
+    "head_dim": 128,
+    "hidden_size": 5120,
+    "intermediate_size": 12288,
+    "max_position_embeddings": 131072,
+    "model_type": "glm4_moe",
+    "moe_intermediate_size": 1536,
+    "num_attention_heads": 96,
+    "n_routed_experts": 160,
+    "n_shared_experts": 1,
+    "num_experts_per_tok": 8,
+    "first_k_dense_replace": 3,
+    "num_hidden_layers": 92,
+    "num_key_value_heads": 8,
+    "tie_word_embeddings": false,
+    "vocab_size": 151552
+   }
+  },
+  {
+   "name": "GLM-4.5-Air",
+   "aliases": [
+    "zai-org/glm-4.5-air"
+   ],
+   "num_params": 110468824832,
+   "repo": "zai-org/GLM-4.5-Air",
+   "config": {
+    "head_dim": 128,
+    "hidden_size": 4096,
+    "intermediate_size": 10944,
+    "max_position_embeddings": 131072,
+    "model_type": "glm4_moe",
+    "moe_intermediate_size": 1408,
+    "num_attention_heads": 96,
+    "n_routed_experts": 128,
+    "n_shared_experts": 1,
+    "num_experts_per_tok": 8,
+    "first_k_dense_replace": 1,
+    "num_hidden_layers": 46,
+    "num_key_value_heads": 8,
+    "tie_word_embeddings": false,
+    "vocab_size": 151552
+   }
+  },
+  {
+   "name": "GLM-5.3",
+   "aliases": [
+    "zai-org/glm-5.3"
+   ],
+   "num_params": 753329940480,
+   "repo": "zai-org/GLM-5.3",
+   "config": {
+    "first_k_dense_replace": 3,
+    "head_dim": 192,
+    "hidden_size": 6144,
+    "index_head_dim": 128,
+    "indexer_types": [
+     "full",
+     "full",
+     "full",
+     "shared",
+     "shared",
+     "shared",
+     "full",
+     "shared",
+     "shared",
+     "shared",
+     "full",
+     "shared",
+     "shared",
+     "shared",
+     "full",
+     "shared",
+     "shared",
+     "shared",
+     "full",
+     "shared",
+     "shared",
+     "shared",
+     "full",
+     "shared",
+     "shared",
+     "shared",
+     "full",
+     "shared",
+     "shared",
+     "shared",
+     "full",
+     "shared",
+     "shared",
+     "shared",
+     "full",
+     "shared",
+     "shared",
+     "shared",
+     "full",
+     "shared",
+     "shared",
+     "shared",
+     "full",
+     "shared",
+     "shared",
+     "shared",
+     "full",
+     "shared",
+     "shared",
+     "shared",
+     "full",
+     "shared",
+     "shared",
+     "shared",
+     "full",
+     "shared",
+     "shared",
+     "shared",
+     "full",
+     "shared",
+     "shared",
+     "shared",
+     "full",
+     "shared",
+     "shared",
+     "shared",
+     "full",
+     "shared",
+     "shared",
+     "shared",
+     "full",
+     "shared",
+     "shared",
+     "shared",
+     "full",
+     "shared",
+     "shared",
+     "shared"
+    ],
+    "intermediate_size": 12288,
+    "kv_lora_rank": 512,
+    "max_position_embeddings": 1048576,
+    "mlp_layer_types": [
+     "dense",
+     "dense",
+     "dense",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse",
+     "sparse"
+    ],
+    "model_type": "glm_moe_dsa",
+    "moe_intermediate_size": 2048,
+    "moe_layer_freq": 1,
+    "n_routed_experts": 256,
+    "n_shared_experts": 1,
+    "num_attention_heads": 64,
+    "num_experts_per_tok": 8,
+    "num_hidden_layers": 78,
+    "num_key_value_heads": 64,
+    "q_lora_rank": 2048,
+    "qk_nope_head_dim": 192,
+    "qk_rope_head_dim": 64,
+    "tie_word_embeddings": false,
+    "v_head_dim": 256,
+    "vocab_size": 154880,
+    "quantization_config": {
+     "quant_method": "fp8"
+    }
+   }
+  },
+  {
+   "name": "Nemotron-Nano-9B-v2",
+   "aliases": [
+    "nemotron-nano-9b"
+   ],
+   "num_params": 8888227328,
+   "repo": "nvidia/NVIDIA-Nemotron-Nano-9B-v2",
+   "config": {
+    "conv_kernel": 4,
+    "head_dim": 128,
+    "hidden_size": 4480,
+    "hybrid_override_pattern": "M-M-M-MM-M-M-M*-M-M-M*-M-M-M-M*-M-M-M-M*-M-MM-M-M-M-M-M-",
+    "intermediate_size": 15680,
+    "mamba_head_dim": 80,
+    "mamba_num_groups": 8,
+    "mamba_num_heads": 128,
+    "mamba_state_dim": 128,
+    "max_position_embeddings": 131072,
+    "model_type": "nemotron_h",
+    "n_groups": 8,
+    "num_attention_heads": 40,
+    "num_hidden_layers": 56,
+    "num_key_value_heads": 8,
+    "ssm_state_size": 128,
+    "tie_word_embeddings": false,
+    "vocab_size": 131072
+   }
+  },
+  {
+   "name": "Granite-4.0-H-Small",
+   "aliases": [
+    "granite-4.0-h-small"
+   ],
+   "num_params": 32207337984,
+   "repo": "ibm-granite/granite-4.0-h-small",
+   "config": {
+    "hidden_size": 4096,
+    "intermediate_size": 768,
+    "layer_types": [
+     "mamba",
+     "mamba",
+     "mamba",
+     "mamba",
+     "mamba",
+     "attention",
+     "mamba",
+     "mamba",
+     "mamba",
+     "mamba",
+     "mamba",
+     "mamba",
+     "mamba",
+     "mamba",
+     "mamba",
+     "attention",
+     "mamba",
+     "mamba",
+     "mamba",
+     "mamba",
+     "mamba",
+     "mamba",
+     "mamba",
+     "mamba",
+     "mamba",
+     "attention",
+     "mamba",
+     "mamba",
+     "mamba",
+     "mamba",
+     "mamba",
+     "mamba",
+     "mamba",
+     "mamba",
+     "mamba",
+     "attention",
+     "mamba",
+     "mamba",
+     "mamba",
+     "mamba"
+    ],
+    "mamba_d_conv": 4,
+    "mamba_d_head": 64,
+    "mamba_d_state": 128,
+    "mamba_expand": 2,
+    "mamba_n_groups": 1,
+    "mamba_n_heads": 128,
+    "max_position_embeddings": 131072,
+    "model_type": "granitemoehybrid",
+    "num_attention_heads": 32,
+    "num_experts_per_tok": 10,
+    "num_hidden_layers": 40,
+    "num_key_value_heads": 8,
+    "num_local_experts": 72,
+    "shared_intermediate_size": 1536,
+    "tie_word_embeddings": true,
+    "vocab_size": 100352
+   }
+  }
+ ]
+}

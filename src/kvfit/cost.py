@@ -7,27 +7,41 @@ the reader. Always confirm against your provider's current pricing.
 
 from __future__ import annotations
 
-# Approximate on-demand USD/hour, single GPU. Deliberately conservative.
+# Approximate on-demand USD/hour, single GPU: rough medians across GPU clouds
+# (neoclouds are often cheaper, hyperscalers 1.5-3x more). The fastest-drifting
+# numbers in this package: pass ``price_per_hour`` with what you actually pay.
+PRICES_AS_OF = "2026-09"
+
 _HOURLY_USD: dict[str, float] = {
-    "h200": 4.50,
-    "h100": 3.00,
-    "h100-80gb": 3.00,
-    "a100-80gb": 1.80,
-    "a100": 1.20,
-    "a100-40gb": 1.20,
-    "l40s": 1.10,
-    "l4": 0.75,
+    "b200": 6.50,
+    "h200": 3.80,
+    "h100": 3.20,
+    "h100-80gb": 3.20,
+    "mi300x": 2.90,
+    "a100-80gb": 2.00,
+    "a100": 1.30,
+    "a100-40gb": 1.30,
+    "l40s": 1.50,
+    "l4": 0.70,
     "a10g": 0.75,
-    "v100": 0.60,
+    "v100": 0.50,
     "t4": 0.35,
-    "rtx-4090": 0.50,
-    "rtx-3090": 0.35,
+    "rtx-a6000": 0.50,
+    "rtx-5090": 0.75,
+    "rtx-4090": 0.45,
+    "rtx-3090": 0.25,
 }
 
 
-def hourly_cost(gpu_name: str, num_gpus: int = 1) -> float | None:
-    """Estimated USD/hour for ``num_gpus`` of a GPU, or ``None`` if unknown."""
-    rate = _HOURLY_USD.get(gpu_name.strip().lower())
+def hourly_cost(
+    gpu_name: str, num_gpus: int = 1, *, price_per_hour: float | None = None,
+) -> float | None:
+    """Estimated USD/hour for ``num_gpus`` of a GPU, or ``None`` if unknown.
+
+    ``price_per_hour`` (per GPU) overrides the built-in table.
+    """
+    rate = price_per_hour if price_per_hour is not None else _HOURLY_USD.get(
+        gpu_name.strip().lower())
     if rate is None:
         return None
     return rate * max(1, num_gpus)

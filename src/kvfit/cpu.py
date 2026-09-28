@@ -11,18 +11,24 @@ from __future__ import annotations
 
 from .models import DeviceSpec
 
-# Friendly presets: alias -> total system RAM in GiB.
-_CPU_PRESETS: dict[str, float] = {
-    "laptop-8gb": 8,
-    "laptop-16gb": 16,
-    "laptop-32gb": 32,
-    "desktop-32gb": 32,
-    "desktop-64gb": 64,
-    "workstation-128gb": 128,
-    "server-256gb": 256,
-    "mac-m3-16gb": 16,
-    "mac-m3-24gb": 24,
-    "mac-m3-max-64gb": 64,
+# Friendly presets: alias -> (total RAM GiB, memory bandwidth GB/s, TFLOPS).
+# Bandwidth drives CPU decode speed; TFLOPS (CPU SIMD, or the Apple GPU that
+# llama.cpp / MLX actually use on a Mac) drives prompt processing.
+_CPU_PRESETS: dict[str, tuple[float, float, float]] = {
+    "laptop-8gb": (8, 60, 0.5),
+    "laptop-16gb": (16, 80, 0.8),
+    "laptop-32gb": (32, 90, 1.0),
+    "desktop-32gb": (32, 90, 1.5),
+    "desktop-64gb": (64, 90, 1.5),
+    "workstation-128gb": (128, 300, 5),  # 8-channel DDR5
+    "server-256gb": (256, 460, 10),  # 12-channel DDR5
+    "mac-m3-16gb": (16, 100, 7),
+    "mac-m3-24gb": (24, 100, 7),
+    "mac-m3-max-64gb": (64, 400, 28),
+    "mac-m4-16gb": (16, 120, 8),
+    "mac-m4-pro-48gb": (48, 273, 17),
+    "mac-m4-max-128gb": (128, 546, 34),
+    "mac-m3-ultra-512gb": (512, 819, 57),
 }
 
 # On CPU, memory shared with the OS and other apps. Reserve some, and don't plan
@@ -97,7 +103,8 @@ def resolve_cpu(
             raise ValueError(f"Could not parse RAM size in {spec!r}") from exc
 
     if raw in _CPU_PRESETS:
-        return _make(_CPU_PRESETS[raw], raw, reserve_gib, usable_fraction)
+        ram, bw, tf = _CPU_PRESETS[raw]
+        return _make(ram, raw, reserve_gib, usable_fraction, bandwidth_gbs=bw, tflops=tf)
 
     # Bare number as string.
     try:
@@ -110,11 +117,21 @@ def resolve_cpu(
         ) from exc
 
 
-def _make(gib: float, name: str, reserve: float, frac: float) -> DeviceSpec:
+def _make(
+    gib: float,
+    name: str,
+    reserve: float,
+    frac: float,
+    *,
+    bandwidth_gbs: float | None = None,
+    tflops: float | None = None,
+) -> DeviceSpec:
     return DeviceSpec(
         name=name if name.startswith("cpu") else f"cpu-{name}",
         memory_gib=gib,
         reserved_gib=reserve,
         usable_fraction=frac,
         kind="cpu",
+        bandwidth_gbs=bandwidth_gbs,
+        tflops=tflops,
     )
